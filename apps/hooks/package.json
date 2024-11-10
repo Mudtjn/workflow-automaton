@@ -1,0 +1,23 @@
+{
+  "name": "hooks",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "start": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@repo/db": "*",
+    "@repo/utils": "*",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

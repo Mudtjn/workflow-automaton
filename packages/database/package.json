@@ -1,5 +1,6 @@
 {
   "name": "@repo/db",
+  "type": "module",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -8,6 +9,9 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate"
   },
+  "exports": {
+    ".": "./src/index.ts"
+  }, 
   "keywords": [],
   "author": "",
   "license": "ISC",

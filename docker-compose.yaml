@@ -13,5 +13,14 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  queue:
+    image: apache/kafka:3.9.0
+    restart: always
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+
 volumes:
   db_data:
+  kafka_data:
