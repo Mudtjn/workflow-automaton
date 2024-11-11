@@ -83,7 +83,7 @@ Learn more about the power of Turborepo:
 
 # Components 
 
-1. Prisma database -> schema defined
-2. webhook interceptor 
+1. Prisma database -> schema defined :white_check_mark:
+2. webhook interceptor :white_check_mark:
 3. Sweeper process 
 4. queue processor

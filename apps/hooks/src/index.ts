@@ -9,7 +9,6 @@ app.use(cors());
 
 const client = new PrismaClient(); 
 
-
 app.get("/hooks/catch/:userId/:zapId", async (req: Request, res: Response) => {
     // @ts-ignore
     // TODO: set up password authentication to check webhook is correctly run 
@@ -27,9 +26,10 @@ app.get("/hooks/catch/:userId/:zapId", async (req: Request, res: Response) => {
 
         await tx.zapRunOutbox.create({
             data: {
-                zapRunId: run.id
+                zapRunId: run.id, 
+                userId: userId
             }
-        })
+        }); 
     })
 
     res.json({

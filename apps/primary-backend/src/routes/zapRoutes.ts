@@ -1,11 +1,10 @@
 import { Router } from 'express';   
 import { PrismaClient } from "@repo/db"; 
-import { JWT_PASSWORD, SigninSchema, SignupSchema, ZapCreateSchema } from '../config.js';
-import jwt from "jsonwebtoken"; 
+import { ZapCreateSchema } from '../config.js';
 import { authMiddleware } from '../authMiddleware.js';
+import { client } from '../db/index.js';
 
 const zapRouter = Router(); 
-const client = new PrismaClient(); 
 
 zapRouter.post("/", authMiddleware, async(req: any, res: any) => {
     const id = req.id; 
@@ -84,6 +83,36 @@ zapRouter.post("/", authMiddleware, async(req: any, res: any) => {
     }); 
 })
 
+zapRouter.get("/", authMiddleware, async(req: any, res: any) => {
+    const id = req.id; 
+    const zaps = await client.zap.findMany({
+        where:{
+            userId: id
+        }, 
+        include: {
+            trigger: {
+                include: {
+                    type: true
+                }
+            }, 
+            actions: {
+                include: {
+                    action: true
+                }
+            }
+        }
+    }); 
+
+    if(!zaps){
+        return res.status(411).json({
+            message: "Zap Not found"
+        }); 
+    }
+    return res.json({
+        zap: zaps
+    });
+})
+
 // GET: zap along with actions
 zapRouter.get("/:zapId", authMiddleware, async(req: any, res: any) => {
     const zapId = req.params.zapId; 
@@ -94,10 +123,18 @@ zapRouter.get("/:zapId", authMiddleware, async(req: any, res: any) => {
             userId: id
         }, 
         include: {
-            trigger: true, 
-            actions: true
+            trigger: {
+                include: {
+                    type: true
+                }
+            }, 
+            actions: {
+                include: {
+                    action: true
+                }
+            }
         }
-    })
+    }); 
 
     if(!zap){
         return res.status(411).json({

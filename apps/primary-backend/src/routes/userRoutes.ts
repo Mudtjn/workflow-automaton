@@ -1,11 +1,10 @@
 import { Router } from 'express';   
-import { PrismaClient } from "@repo/db"; 
 import { JWT_PASSWORD, SigninSchema, SignupSchema } from '../config.js';
 import jwt from "jsonwebtoken"; 
 import { authMiddleware } from '../authMiddleware.js';
+import { client } from '../db/index.js';
 
 const userRouter = Router(); 
-const client = new PrismaClient(); 
 
 userRouter.post("/signup", async (req: any, res: any) => {
     // TODO: encrypt password and store in db
