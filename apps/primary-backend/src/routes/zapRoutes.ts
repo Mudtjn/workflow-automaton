@@ -16,70 +16,53 @@ zapRouter.post("/", authMiddleware, async(req: any, res: any) => {
     }
 
     const zapId = await client.$transaction(async  (tx) => {
-        
-        const actions = await tx.action.createManyAndReturn({
-            data: parsedData.data.actions.map((x, index) => ({
-                actionId: x.availableActionId,
-                sortingOrder: index,
-                metadata: x.actionMetadata, 
-                zapId: ""
-            })) as any
-        }) 
-
-        const trigger = await tx.trigger.create({
-            data: {
-                triggerId: parsedData.data.availableTriggerId,
-                zapId: ""
-            }
-        });
-
-
         const zap = await tx.zap.create({
             data: {
                 user: {
                     connect: {
                         id: id
                     }
-                }, 
-                trigger: {
-                    connect: {
-                        id: trigger.id
-                    }
-                },
-                actions: {
-                    connect: actions.map(action => ({
-                        id: action.id
-                    }))
-                }, 
-            } as any
+                }
+            }
         });
 
-        await tx.trigger.update({
-            where: {
-                id: trigger.id
-            },
+        const trigger = await tx.trigger.create({
             data: {
+                triggerId: parsedData.data.availableTriggerId, 
                 zapId: zap.id
             }
-        })
+        }); 
 
-        await tx.action.updateMany({
-            where: {
-                id: {
-                    in: actions.map((action) => action.id)
-                }
-            }, 
-            data: {
+        const actions = await tx.action.createManyAndReturn({
+            data: parsedData.data.actions.map((x, index) => ({
+                actionId: x.availableActionId,
+                sortingOrder: index,
+                metadata: x.actionMetadata, 
                 zapId: zap.id
-            }
-        })
+            }))
+        });
 
         return zap.id;
-
     })
-
+    const result = await client.zap.findFirst({
+        where: {
+            id: zapId
+        }, 
+        include: {
+            trigger: {
+                include: {
+                    type: true
+                }
+            }, 
+            actions: {
+                include: {
+                    action: true, 
+                }
+            }
+        }
+    })
     return res.json({
-        zapId: zapId
+        result
     }); 
 })
 

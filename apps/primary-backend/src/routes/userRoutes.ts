@@ -1,5 +1,6 @@
 import { Router } from 'express';   
-import { JWT_PASSWORD, SigninSchema, SignupSchema } from '../config.js';
+// @ts-ignore
+import { JWT_PASSWORD, SigninSchema, SignupSchema } from '../config';
 import jwt from "jsonwebtoken"; 
 import { authMiddleware } from '../authMiddleware.js';
 import { client } from '../db/index.js';
@@ -58,7 +59,6 @@ userRouter.post("/signin", async(req: any, res: any)=>{
             message: "Invalid Credentials"
         }); 
     }
-
     const token = jwt.sign({
         id: user.id
     }, JWT_PASSWORD); 

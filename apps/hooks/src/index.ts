@@ -9,7 +9,7 @@ app.use(cors());
 
 const client = new PrismaClient(); 
 
-app.get("/hooks/catch/:userId/:zapId", async (req: Request, res: Response) => {
+app.post("/hooks/catch/:userId/zap/:zapId", async (req: Request, res: Response) => {
     // @ts-ignore
     // TODO: set up password authentication to check webhook is correctly run 
     const userId = req.params.userId as string; 

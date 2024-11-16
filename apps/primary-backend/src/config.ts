@@ -20,4 +20,4 @@ export const ZapCreateSchema = z.object({
     }))
 });
 
-export const JWT_PASSWORD = process.env.JWT_PASSWORD || ""; 
+export const JWT_PASSWORD = process.env.JWT_PASSWORD || "abc123"; 

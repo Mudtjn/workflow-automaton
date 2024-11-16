@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'; 
-import { JWT_PASSWORD } from './config.js';
+import { JWT_PASSWORD } from './config';
 
 export const authMiddleware = (req: any, res: any, next: any) => {
     const token = req.headers.authorization as unknown as string; 

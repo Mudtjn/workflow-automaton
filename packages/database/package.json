@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:migrate": "prisma migrate dev", 
     "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate"
+    "db:push": "prisma db push --skip-generate", 
+    "db:seed": "tsc -b && node dist/seed.js"
   },
   "exports": {
     ".": "./src/index.ts"
