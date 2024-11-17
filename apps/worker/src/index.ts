@@ -2,7 +2,7 @@ import {PrismaClient} from "@repo/db";
 import {Kafka} from 'kafkajs'; 
 import {KAFKA_TOPIC_NAME} from '@repo/utils'; 
 
-const prismaClient = new PrismaClient(); 
+const client = new PrismaClient(); 
 
 const kafka = new Kafka({
     clientId: "worker", 
@@ -20,11 +20,65 @@ async function main(){
     await consumer.run({
         autoCommit: false, 
         eachMessage: async ({topic, partition, message}) => {
-            console.log(topic); 
-            console.log(partition); 
-            console.log(message); 
+            console.log(message.value?.toString()); 
+            if(message.value?.toString() == undefined){
+                return; 
+            }
+            const parsedBody = JSON.parse(message.value?.toString()); 
+            const {zapRunId, stage} = parsedBody;
+            
+            const zapRunDetails = await client.zapRun.findFirst({
+                where: {
+                    id: zapRunId
+                }, 
+                include: {
+                    zap: {
+                        include: {
+                            actions: {
+                                include: {
+                                    action: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }); 
+
+            const currentAction = zapRunDetails?.zap.actions.find((x)=> x.sortingOrder == stage); 
+
+            if(!currentAction){
+                console.log('current action not found'); 
+                return; 
+            }
+
+            const zapRunMetadata = zapRunDetails?.metadata; 
+            console.log(zapRunMetadata); 
+
+
+            await new Promise((r) => setTimeout(r, 500)); 
+
+            const lastStage = (zapRunDetails?.zap.actions.length || 1) - 1; 
+            if(lastStage != stage){
+                console.log("pushing back to queue"); 
+                await producer.send({
+                    topic: KAFKA_TOPIC_NAME, 
+                    messages: [{
+                        value: JSON.stringify({
+                            stage: stage + 1, 
+                            zapRunId
+                        })
+                    }]
+                })
+            }
+
+            console.log("processing done"); 
+            await consumer.commitOffsets([{
+                topic: KAFKA_TOPIC_NAME, 
+                partition: partition, 
+                offset: (parseInt(message.offset)+1).toString()
+            }])
         }
-    })
+    }); 
 }
 
 main(); 
