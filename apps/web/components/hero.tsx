@@ -1,11 +1,13 @@
 "use client"
 import { ReactNode } from "react";
 import PrimaryButton from "./buttons/primaryButton";
+import { useRouter } from "next/navigation";
 
 export default function Hero(): ReactNode {
+  const router = useRouter(); 
   return (
-    <div className="flex px-40 pt-20 container">
-      <div className="pt-10">
+    <div className="flex px-40 py-20 max-w-6xl justify-items-center">
+      <div className="pt-10 justify-items-center">
         <h1 className="text-7xl font-extrabold font-sans max-w-4xl">
           Automate without limits
         </h1>
@@ -15,7 +17,7 @@ export default function Hero(): ReactNode {
           imagination.
         </div>
         <div className="pt-10">
-          <PrimaryButton onClick={() => {}} size="big">
+          <PrimaryButton onClick={() => {router.push('/signup')}} size="big">
             Start with free email
           </PrimaryButton>
         </div>
